@@ -25,6 +25,7 @@ public void setup() {
   
   server = new Server(this, 4444);
   log = new Log(10);
+  log.add("This IP address is " + Server.ip());
 }
 
 public void draw() {

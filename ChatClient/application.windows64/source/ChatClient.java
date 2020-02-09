@@ -21,20 +21,35 @@ public class ChatClient extends PApplet {
 Client client;
 Chat chat;
 Typing typing;
+int loginStage; // 1 : IP address    0 : normal application
+String serverIP;
 
 public void setup() {
   
-  client = new Client(this, "192.168.56.1", 4444);
   chat = new Chat(10);
   typing = new Typing();
+  loginStage = 1;
 }
 
 public void draw() {
   background(0);
-  chat.getMessage();
-  chat.show();
-  typing.show();
-  typing.type();
+  switch(loginStage) {
+  case 0: // application itself
+    chat.getMessage();
+    chat.show();
+    typing.show();
+    typing.type();
+    break;
+  case 1: // IP
+    text("Please enter the server IP.", width/2, height/2);
+    typing.show();
+    typing.type();
+    break;
+  }
+}
+
+public void connect() {
+  client = new Client(this, serverIP, 4444);
 }
 class Chat {
   private int maxMessages;
@@ -93,8 +108,18 @@ class Typing {
   }
   
   public void send() { // Send the message
-    client.write(message);
-    message = "";
+  switch(loginStage) {
+    case 0:
+      client.write(message);
+      message = "";
+      break;
+    case 1:
+      serverIP = message;
+      connect();
+      message = "";
+      loginStage--;
+      break;
+  }
   }
   
   public void show() {

@@ -23,8 +23,18 @@ class Typing {
   }
   
   public void send() { // Send the message
-    client.write(message);
-    message = "";
+  switch(loginStage) {
+    case 0:
+      client.write(message);
+      message = "";
+      break;
+    case 1:
+      serverIP = message;
+      connect();
+      message = "";
+      loginStage--;
+      break;
+  }
   }
   
   public void show() {
